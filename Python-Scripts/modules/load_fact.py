@@ -87,8 +87,10 @@ def load_fact_table():
         .fillna({'publication_time_key': '-1'}) \
         .fillna({'application_date_key': '-1'}) \
         .fillna({'application_time_key': '-1'}) \
-        .fillna({'job_quantity': '1'}) \
-        .fillna({'applicants_quantity': '0'}) \
+        .fillna({'job_quantity': 1}) \
+        .fillna({'applicants_quantity': 0}) \
+        .fillna({'applicant_age': -1}) \
+        .fillna({'activedays': -1}) \
         .select('jobpost_key','applicant_key','title_key','company_key', 'publication_date_key', 'publication_time_key',
                 'application_date_key', 'application_time_key', 'status_key','city_key', 'applicant_age', 'applicants_quantity',
                 'job_quantity', 'activedays', 'created_date')
@@ -160,8 +162,10 @@ def load_fact_table():
         .fillna({'publication_time_key': '-1'}) \
         .fillna({'application_date_key': '-1'}) \
         .fillna({'application_time_key': '-1'}) \
-        .fillna({'job_quantity': '1'}) \
-        .fillna({'applicants_quantity': '0'}) \
+        .fillna({'job_quantity': 1}) \
+        .fillna({'applicants_quantity': 0}) \
+        .fillna({'applicant_age': -1}) \
+        .fillna({'activedays': -1}) \
         .select('jobpost_key','applicant_key','title_key','company_key', 'publication_date_key', 'publication_time_key',
                 'application_date_key', 'application_time_key', 'status_key','city_key', 'applicant_age', 'applicants_quantity',
                 'job_quantity', 'activedays', 'created_date')
