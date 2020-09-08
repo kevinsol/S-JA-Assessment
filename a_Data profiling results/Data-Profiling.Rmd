@@ -1,0 +1,248 @@
+---
+title: "Data profiling"
+author: "Kevin Solano Ayala"
+date: "05/09/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rjson)
+library(ggplot2)
+library(lubridate)
+library(plotrix)
+```
+Reading json data sample
+
+```{r read}
+jsondata <- fromJSON(file = "E:/data-sample.json")
+```
+
+Data schema
+
+```{r schema}
+str(jsondata[[1]])
+```
+
+```{r job, echo=FALSE}
+listAdverts <- lapply(jsondata, function(x) x[['adverts']])
+listapplicants <- unlist(lapply(jsondata, function(x) x[['applicants']]),recursive=FALSE)
+
+df_id <- data.frame(field=matrix(unlist(lapply(jsondata, function(x) x[['id']])),byrow=T),stringsAsFactors=FALSE)
+df_company <- data.frame(field=matrix(unlist(lapply(jsondata, function(x) x[['company']])),byrow=T),stringsAsFactors=FALSE)
+df_sector <- data.frame(field=matrix(unlist(lapply(jsondata, function(x) x[['sector']])),byrow=T),stringsAsFactors=FALSE)
+df_title <- data.frame(field=matrix(unlist(lapply(jsondata, function(x) x[['title']])),byrow=T),stringsAsFactors=FALSE)
+df_city <- data.frame(field=matrix(unlist(lapply(jsondata, function(x) x[['city']])),byrow=T),stringsAsFactors=FALSE)
+df_benefits <- data.frame(field=matrix(unlist(lapply(jsondata, function(x) x[['benefits']])),byrow=T),stringsAsFactors=FALSE)
+df_a_id <- data.frame(field=matrix(unlist(lapply(listAdverts, function(x) x[['id']])),byrow=T),stringsAsFactors=FALSE)
+df_a_activedays <- data.frame(field=matrix(unlist(lapply(listAdverts, function(x) x[['activeDays']])),byrow=T),stringsAsFactors=FALSE)
+df_a_status <- data.frame(field=matrix(unlist(lapply(listAdverts, function(x) x[['status']])),byrow=T),stringsAsFactors=FALSE)
+df_a_applyUrl <- data.frame(field=matrix(unlist(lapply(listAdverts, function(x) x[['applyUrl']])),byrow=T),stringsAsFactors=FALSE)
+df_a_publicationDateTime <- data.frame(field=lubridate::as_datetime(as.double(matrix(unlist(lapply(listAdverts, function(x) x[['publicationDateTime']])),byrow=T))),stringsAsFactors=FALSE)
+df_a_firstName <- data.frame(field=matrix(unlist(lapply(listapplicants, function(x) x[['firstName']])),byrow=T),stringsAsFactors=FALSE)
+df_a_lastName <- data.frame(field=matrix(unlist(lapply(listapplicants, function(x) x[['lastName']])),byrow=T),stringsAsFactors=FALSE)
+df_a_age <- data.frame(field=matrix(unlist(lapply(listapplicants, function(x) x[['age']])),byrow=T),stringsAsFactors=FALSE)
+df_a_applicationDate <- data.frame(field=lubridate::as_datetime(as.double(matrix(unlist(lapply(listapplicants, function(x) x[['applicationDate']])),byrow=T))),stringsAsFactors=FALSE)
+df_a_skills <- data.frame(field=matrix(unlist(lapply(listapplicants, function(x) x[['skills']])),byrow=T),stringsAsFactors=FALSE)
+
+dfdp <- data.frame("Field" = c('id',
+                       'adverts.id',
+                       'adverts.activeDays',
+                       'adverts.applyUrl',
+                       'adverts.publicationDateTime',
+                       'adverts.status',
+                       'benefits',
+                       'company',
+                       'sector',
+                       'title',
+                       'city',
+                       'applicants.firstName',
+                       'applicants.lastName',
+                       'applicants.skills',
+                       'applicants.age',
+                       'applicants.applicationDate'),
+            "Type" = c(class(df_id$field),
+                       class(df_a_id$field),
+                       class(df_a_activedays$field),
+                       class(df_a_applyUrl$field),
+                       'datetime',
+                       class(df_a_status$field),
+                       class(df_benefits$field),
+                       class(df_company$field),
+                       class(df_sector$field),
+                       class(df_title$field),
+                       class(df_city$field),
+                       class(df_a_firstName$field),
+                       class(df_a_lastName$field),
+                       class(df_a_skills$field),
+                       class(df_a_age$field),
+                       'datetime'
+                       ),
+            "Total Records" = c(nrow(df_id),
+                              nrow(df_a_id),
+                              nrow(df_a_activedays),
+                              nrow(df_a_applyUrl),
+                              nrow(df_a_publicationDateTime),
+                              nrow(df_a_status),
+                              nrow(df_benefits),
+                              nrow(df_company),
+                              nrow(df_sector),
+                              nrow(df_title),
+                              nrow(df_city),
+                              nrow(df_a_firstName),
+                              nrow(df_a_lastName),
+                              nrow(df_a_skills),
+                              nrow(df_a_age),
+                              nrow(df_a_applicationDate)),
+            "Unique Values" = c(nrow(unique(df_id)),
+                              nrow(unique(df_a_id)),
+                              nrow(unique(df_a_activedays)),
+                              nrow(unique(df_a_applyUrl)),
+                              nrow(unique(df_a_publicationDateTime)),
+                              nrow(unique(df_a_status)),
+                              nrow(unique(df_benefits)),
+                              nrow(unique(df_company)),
+                              nrow(unique(df_sector)),
+                              nrow(unique(df_title)),
+                              nrow(unique(df_city)),
+                              nrow(unique(df_a_firstName)),
+                              nrow(unique(df_a_lastName)),
+                              nrow(unique(df_a_skills)),
+                              nrow(unique(df_a_age)),
+                              nrow(unique(df_a_applicationDate))),
+           "Min Value" = c(min(df_id$field),
+                           min(df_a_id$field),
+                           min(df_a_activedays$field),
+                           '...',
+                           as.character(min(df_a_publicationDateTime$field)),
+                           min(df_a_status$field),
+                           min(df_benefits$field),
+                           min(df_company$field),
+                           min(df_sector$field),
+                           min(df_title$field),
+                           min(df_city$field),
+                           min(df_a_firstName$field),
+                           min(df_a_lastName$field),
+                           min(df_a_skills$field),
+                           min(df_a_age$field),
+                           as.character(lubridate::as_datetime(min(df_a_applicationDate$field)))
+           ),
+           "Max Value" = c(max(df_id$field),
+                           max(df_a_id$field),
+                           max(df_a_activedays$field),
+                           '...',
+                           as.character(max(df_a_publicationDateTime$field)),
+                           max(df_a_status$field),
+                           max(df_benefits$field),
+                           max(df_company$field),
+                           max(df_sector$field),
+                           max(df_title$field),
+                           max(df_city$field),
+                           max(df_a_firstName$field),
+                           max(df_a_lastName$field),
+                           max(df_a_skills$field),
+                           max(df_a_age$field),
+                           as.character(lubridate::as_datetime(max(df_a_applicationDate$field)))
+           ),
+           "Max Length Value" = c( max(sapply(df_id, function(x) nchar(x))),
+                                   max(sapply(df_a_id, function(x) nchar(x))),
+                                   max(sapply(df_a_activedays, function(x) nchar(x))),
+                                   max(sapply(df_a_applyUrl, function(x) nchar(x))),
+                                   max(sapply(df_a_publicationDateTime, function(x) nchar(as.character(x)))),
+                                   max(sapply(df_a_status, function(x) nchar(x))),
+                                   max(sapply(df_benefits, function(x) nchar(x))),
+                                   max(sapply(df_company, function(x) nchar(x))),
+                                   max(sapply(df_sector, function(x) nchar(x))),
+                                   max(sapply(df_title, function(x) nchar(x))),
+                                   max(sapply(df_city, function(x) nchar(x))),
+                                   max(sapply(df_a_firstName, function(x) nchar(x))),
+                                   max(sapply(df_a_lastName, function(x) nchar(x))),
+                                   max(sapply(df_a_skills, function(x) nchar(x))),
+                                   max(sapply(df_a_age, function(x) nchar(x))),
+                                   max(sapply(df_a_applicationDate, function(x) nchar(as.character(x))))
+           )
+)
+```
+Summary
+
+```{r tab}
+ knitr::kable(dfdp)
+```
+
+Metrics
+
+```{r numeric}
+ knitr::kable(data.frame("Metrics" = c("Mean", "Median", "Standard Error", "Standard deviation", "Variance"),
+                        "adverts.activeDays" =round(c(mean(df_a_activedays$field), 
+                                        median(df_a_activedays$field), 
+                                        std.error(df_a_activedays$field),
+                                        sd(df_a_activedays$field),
+                                        var(df_a_activedays$field)),2),
+                        "applicants.age" =round(c(mean(df_a_age$field), 
+                                           median(df_a_age$field), 
+                                           std.error(df_a_age$field),
+                                           sd(df_a_age$field),
+                                           var(df_a_age$field)),2)
+))
+
+summary(c(df_a_activedays$field, df_a_age$field))
+```
+
+Data visualization
+
+```{r graphs}
+hist(df_a_age$field, 
+     main="Histogram: applicants.Age", 
+     xlab="Age", 
+     ylab="Frequency",
+     border="#376278", 
+     col="#009fa8", 
+     cex.main=1, 
+     cex.lab=0.95, 
+     cex.axis=0.8,
+     las=1,
+     breaks=10)
+
+hist(df_a_activedays$field, 
+     main="Histogram: adverts.activeDays", 
+     xlab="Days", 
+     ylab="Frequency",
+     border="#376278", 
+     col="#009fa8", 
+     cex.main=1, 
+     cex.lab=0.95, 
+     cex.axis=0.8,
+     las=1,
+     breaks=20)
+
+ggplot(data=df_a_status, aes(x=field)) +
+  geom_bar(fill="#009fa8")+
+  geom_text(aes(label=..count.., group=1),
+            stat='count', 
+            vjust=-0.5, 
+            color="#009fa8")+
+  theme_minimal()+
+  theme(axis.title=element_blank())+
+  labs(title='Adverts.status Values Distribution')
+
+ggplot(data=df_benefits, aes(x=field)) +
+  geom_bar(fill="#009fa8")+
+  geom_text(aes(label=..count.., group=1),
+            stat='count', 
+            vjust=-0.5, 
+            color="#009fa8")+
+  theme_minimal()+
+  theme(axis.title=element_blank())+
+  labs(title='Benefits Values Distribution')
+
+ggplot(data=df_sector, aes(x=field)) +
+  geom_bar(fill="#009fa8")+
+  geom_text(aes(label=..count.., group=1),
+            stat='count', 
+            vjust=-0.5, 
+            color="#009fa8")+
+  theme_minimal()+
+  theme(axis.title=element_blank())+
+  labs(title='Sector Values Distribution')
+
+```     
