@@ -93,6 +93,8 @@ def load_fact_table():
                 'application_date_key', 'application_time_key', 'status_key','city_key', 'applicant_age', 'applicants_quantity',
                 'job_quantity', 'activedays', 'created_date')
         
+        df_stg_jobs_apps=df_stg_jobs_apps.withColumn("applicant_age", df_stg_jobs_apps["applicant_age"].cast(t.IntegerType()))
+        df_stg_jobs_apps=df_stg_jobs_apps.withColumn("activedays", df_stg_jobs_apps["activedays"].cast(t.IntegerType()))
         df_stg_jobs_apps.show(5)
         
         # load bridge
@@ -163,6 +165,9 @@ def load_fact_table():
         .select('jobpost_key','applicant_key','title_key','company_key', 'publication_date_key', 'publication_time_key',
                 'application_date_key', 'application_time_key', 'status_key','city_key', 'applicant_age', 'applicants_quantity',
                 'job_quantity', 'activedays', 'created_date')
+        
+        df_stg_jobs_apps=df_stg_jobs_apps.withColumn("applicant_age", df_stg_jobs_apps["applicant_age"].cast(t.IntegerType()))
+        df_stg_jobs_apps=df_stg_jobs_apps.withColumn("activedays", df_stg_jobs_apps["activedays"].cast(t.IntegerType()))
         
         df_stg_jobs_apps.show(5)
                 

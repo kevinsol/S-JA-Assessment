@@ -60,6 +60,10 @@ def load_data_to_redshift():
                                iam_role {}
                                FORMAT AS PARQUET
     """).format(S3+"/presentation/jobs/dim_skill",ARN),
+                  ("""  COPY dim_status from '{}'
+                               iam_role {}
+                               FORMAT AS PARQUET
+    """).format(S3+"/presentation/jobs/dim_status",ARN),
                   ("""  COPY bridge_applicant_skills from '{}'
                                iam_role {}
                                FORMAT AS PARQUET
